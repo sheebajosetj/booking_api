@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upcoming Classes</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { border-collapse: collapse; width: 60%; margin: auto; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        caption { font-size: 1.5em; margin: 10px; }
+        .message { text-align: center; margin: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Upcoming Classes ({{ tz }})</h1>
+
+   {% if message %}
+<div id="popupMessage" 
+     style="
+        position: fixed; 
+        top: 20px; 
+        right: 20px; 
+        background-color: {% if 'successful' in message|lower %}#4CAF50{% else %}#f44336{% endif %};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+     ">
+    {{ message }}
+</div>
+
+<script>
+    setTimeout(function(){
+        let popup = document.getElementById('popupMessage');
+        if (popup) {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.remove(), 500);
+        }
+    }, 3000); // 3 seconds before vanish
+</script>
+{% endif %}
+
+
+    {% if classes %}
+    <table>
+        <caption>Available Classes</caption>
+        <tr>
+            <th>Class</th>
+            <th>Instructor</th>
+            <th>Start Time ({{ tz }})</th>
+            <th>Available Slots</th>
+            <th>Book</th>
+        </tr>
+        {% for c in classes %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.instructor }}</td>
+            <td>{{ c.start | datetimeformat }}</td>
+            <td>{{ c.available }}</td>
+            <td>
+                <form method="post" action="/book-form">
+                    <input type="hidden" name="class_id" value="{{ c.id }}">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <button type="submit">Book</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="text-align:center;">No upcoming classes available.</p>
+    {% endif %}
+</body>
+</html>
