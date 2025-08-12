@@ -4,20 +4,28 @@ Utility helpers for timezone handling.
 from datetime import datetime
 import pytz
 
+IST = pytz.timezone('Asia/Kolkata')
+UTC = pytz.UTC
 
-def to_utc(dt: datetime, tz_name: str) -> datetime:
-    tz = pytz.timezone(tz_name)
-    localized = tz.localize(dt) if dt.tzinfo is None else dt.astimezone(tz)
-    return localized.astimezone(pytz.UTC)
+def ensure_ist(dt: datetime) -> datetime:
+    """Ensure datetime is IST or convert naive to IST"""
+    if dt.tzinfo is None:
+        return IST.localize(dt)
+    if dt.tzinfo != IST:
+        return dt.astimezone(IST)
+    return dt
 
+def to_utc(dt: datetime) -> datetime:
+    """Convert IST to UTC (enforce IST input)"""
+    ist_dt = ensure_ist(dt)
+    return ist_dt.astimezone(UTC)
 
-def utc_iso(dt: datetime) -> str:
-    return dt.astimezone(pytz.UTC).isoformat()
+def from_utc(utc_dt: datetime, to_tz: str) -> datetime:
+    """Convert UTC to any timezone"""
+    if utc_dt.tzinfo != UTC:
+        raise ValueError("Input must be UTC datetime")
+    return utc_dt.astimezone(pytz.timezone(to_tz))
 
-
-def from_utc_iso_to_tz(utc_iso_str: str, tz_name: str) -> str:
-    utc = datetime.fromisoformat(utc_iso_str)
-    if utc.tzinfo is None:
-        utc = utc.replace(tzinfo=pytz.UTC)
-    target = utc.astimezone(pytz.timezone(tz_name))
-    return target.isoformat()
+def format_datetime(dt: datetime) -> str:
+    """Format datetime with timezone abbreviation"""
+    return dt.strftime("%d %b %Y, %I:%M %p %Z")

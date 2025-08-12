@@ -115,3 +115,27 @@ def list_bookings_by_email(email: str) -> List[Dict[str, Any]]:
             (email,),
         )
         return [dict(r) for r in cur.fetchall()]
+    
+def count_bookings_by_email_for_class(email: str, class_id: int) -> int:
+    
+    conn = get_conn()
+    with closing(conn):
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT COUNT(*) FROM bookings WHERE email = ? AND class_id = ?",
+            (email, class_id),
+        )
+        return cur.fetchone()[0]
+
+
+def count_total_bookings_by_email(email: str) -> int:
+    """Count how many total bookings this email has across all classes."""
+    conn = get_conn()
+    with closing(conn):
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT COUNT(*) FROM bookings WHERE email = ?",
+            (email,),
+        )
+        return cur.fetchone()[0]
+

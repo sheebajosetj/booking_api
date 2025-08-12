@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-
+from typing import Optional
 
 class ClassOut(BaseModel):
     id: int
@@ -17,10 +17,10 @@ class BookRequest(BaseModel):
 
 
 class BookingOut(BaseModel):
-    id: int
+    id: Optional[int] = None
     class_id: int
     class_name: str
-    class_start_utc: str
+    class_start_local: str  # Renamed for accuracy
     name: str
     email: str
-    booked_at_utc: str
+    booked_at_utc: str  # Remains UTC

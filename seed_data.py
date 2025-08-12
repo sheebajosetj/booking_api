@@ -1,24 +1,48 @@
 """
-Seed three classes (Yoga, Zumba, HIIT) if classes table is empty.
-Times are seeded as UTC strings.
+Seed three classes (Yoga, Zumba, HIIT).
+- Default: Adds missing classes only.
+- --force: Resets all classes to new times + clears bookings.json.
+Times are stored as UTC strings.
 """
+
+import sys
+import os
+import json
 from datetime import datetime, timedelta
 from databases_sql import list_classes, insert_class
-from utils import utc_iso
-import pytz
+from utils import to_utc, IST
 
+BOOKINGS_FILE = "bookings.json"
 
-def seed_if_needed():
-    classes = list_classes()
-    if classes:
-        return
-    # We'll create three classes at sensible upcoming times (UTC)
-    now = datetime.now(pytz.UTC)
-    yoga_time = now + timedelta(days=1, hours=9)   # roughly tomorrow morning
-    zumba_time = now + timedelta(days=1, hours=17) # tomorrow evening
-    hiit_time = now + timedelta(days=2, hours=7)   # day after morning
+def clear_bookings():
+    """Clear all bookings by emptying bookings.json."""
+    if os.path.exists(BOOKINGS_FILE):
+        with open(BOOKINGS_FILE, "w") as f:
+            json.dump([], f)
+        print(f"Cleared all bookings in {BOOKINGS_FILE}")
+    else:
+        print(f"No {BOOKINGS_FILE} found, nothing to clear.")
 
-    insert_class("Yoga", "Priya", utc_iso(yoga_time), 10)
-    insert_class("Zumba", "Carlos", utc_iso(zumba_time), 15)
-    insert_class("HIIT", "Aisha", utc_iso(hiit_time), 12)
+def seed_classes(force=False):
+    now_ist = datetime.now(IST)
 
+    classes = [
+        ("Yoga", (now_ist + timedelta(days=1)).replace(hour=9, minute=0, second=0, microsecond=0)),
+        ("Zumba", (now_ist + timedelta(days=1)).replace(hour=17, minute=0, second=0, microsecond=0)),
+        ("HIIT", (now_ist + timedelta(days=2)).replace(hour=7, minute=0, second=0, microsecond=0)),
+    ]
+
+    existing_names = {c["name"] for c in list_classes()}
+
+    if force:
+        clear_bookings()
+
+    for name, ist_time in classes:
+        if force or name not in existing_names:
+            utc_time = to_utc(ist_time)
+            insert_class(name, "Instructor", utc_time.isoformat(), 15)
+            print(f"Seeded: {name} at {ist_time.strftime('%d %b %Y, %I:%M %p')} IST")
+
+if __name__ == "__main__":
+    force_flag = "--force" in sys.argv
+    seed_classes(force=force_flag)

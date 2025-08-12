@@ -1,78 +1,370 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upcoming Classes</title>
+    <title>Fitness Class Booking</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        table { border-collapse: collapse; width: 60%; margin: auto; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        caption { font-size: 1.5em; margin: 10px; }
-        .message { text-align: center; margin: 10px; font-weight: bold; }
-    </style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .timezone-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .timezone-selector label {
+            font-weight: bold;
+        }
+        
+        .timezone-selector select {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        
+        .timezone-selector button {
+            padding: 8px 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .timezone-selector button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .current-time {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .class-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .class-header {
+            padding: 15px 20px;
+            background-color: #f1f8ff;
+            border-bottom: 1px solid #e3f2fd;
+        }
+        
+        .class-header h3 {
+            margin: 0;
+            color: var(--primary);
+        }
+        
+        .class-body {
+            padding: 20px;
+        }
+        
+        .class-info {
+            margin-bottom: 15px;
+        }
+        
+        .class-info div {
+            margin-bottom: 8px;
+            display: flex;
+        }
+        
+        .class-info strong {
+            width: 120px;
+            display: inline-block;
+            color: #555;
+        }
+        
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .booking-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .booking-form button {
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .booking-form button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .availability {
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .available {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .full {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .time-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .time-display .timezone {
+            background-color: #e0f7fa;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        /* Popup message styles */
+        #popupMessage {
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        #popupMessage.error {
+            background-color: #f44336 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .timezone-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+  </style>
 </head>
 <body>
-    <h1 style="text-align:center;">Upcoming Classes ({{ tz }})</h1>
+    <div class="container">
+        <header>
+            <h1>Fitness Class Booking System</h1>
+            <p>Book your spot in our exciting fitness sessions</p>
+        </header>
+        
+        <div class="timezone-selector">
+            <label for="timezone">Select your timezone:</label>
+            <select id="timezone" name="timezone">
+                <option value="Asia/Kolkata" {% if current_tz == "Asia/Kolkata" %}selected{% endif %}>India (IST)</option>
+                <option value="America/New_York" {% if current_tz == "America/New_York" %}selected{% endif %}>New York (EST)</option>
+                <option value="Europe/London" {% if current_tz == "Europe/London" %}selected{% endif %}>London (GMT)</option>
+                <option value="Asia/Singapore" {% if current_tz == "Asia/Singapore" %}selected{% endif %}>Singapore (SGT)</option>
+                <option value="Australia/Sydney" {% if current_tz == "Australia/Sydney" %}selected{% endif %}>Sydney (AEST)</option>
+            </select>
+            <button onclick="updateTimezone()">Update Timezone</button>
+        </div>
+        
+        <div class="current-time">
+            Current time in {{ current_tz }}: {{ now }}
+        </div>
 
-   {% if message %}
-<div id="popupMessage" 
-     style="
-        position: fixed; 
-        top: 20px; 
-        right: 20px; 
-        background-color: {% if 'successful' in message|lower %}#4CAF50{% else %}#f44336{% endif %};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        z-index: 1000;
-        transition: opacity 0.5s ease;
-     ">
-    {{ message }}
-</div>
+        {% if message %}
+        <div id="popupMessage" class="{% if 'error' in message or 'failed' in message %}error{% endif %}">
+            {{ message }}
+        </div>
+        {% endif %}
 
-<script>
-    setTimeout(function(){
-        let popup = document.getElementById('popupMessage');
-        if (popup) {
-            popup.style.opacity = '0';
-            setTimeout(() => popup.remove(), 500);
+        {% if classes %}
+        <div class="cards-container">
+            {% for c in classes %}
+            <div class="class-card">
+                <div class="class-header">
+                    <h3>{{ c.name }}</h3>
+                    <p>with {{ c.instructor }}</p>
+                </div>
+                
+                <div class="class-body">
+                    <div class="class-info">
+                        <div>
+                            <strong>Start Time:</strong>
+                            <span>{{ c.start }}</span>
+                        </div>
+                        <div>
+                            <strong>Duration:</strong>
+                            <span>60 minutes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="availability {% if c.available > 0 %}available{% else %}full{% endif %}">
+                        {% if c.available > 0 %}
+                            {{ c.available }} spot{{ 's' if c.available > 1 }} available
+                        {% else %}
+                            Class is fully booked
+                        {% endif %}
+                    </div>
+                    
+                    {% if c.available > 0 %}
+                    <form class="booking-form">
+                        <input type="hidden" name="class_id" value="{{ c.id }}">
+                        <input type="text" name="name" placeholder="Your Full Name" required>
+                        <input type="email" name="email" placeholder="Your Email Address" required>
+                        <button type="submit">Book This Class</button>
+                    </form>
+                    {% else %}
+                    <div class="full-message">
+                        <p>This class is currently full. Please check back later for availability.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-classes">
+            <p style="text-align:center; font-size: 18px; color: #666;">No upcoming classes available at this time.</p>
+            <p style="text-align:center; color: #999;">Please check back later for new class schedules.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        function updateTimezone() {
+            const timezone = document.getElementById('timezone').value;
+            window.location.href = `/?tz=${timezone}`;
         }
-    }, 3000); // 3 seconds before vanish
-</script>
-{% endif %}
+        
+        // Auto-close popup after 5 seconds
+        setTimeout(() => {
+            const popup = document.getElementById('popupMessage');
+            if (popup) popup.style.display = 'none';
+        }, 5000);
 
+        // Handle booking form JSON submission
+        document.querySelectorAll(".booking-form").forEach(form => {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); // stop normal form POST
 
-    {% if classes %}
-    <table>
-        <caption>Available Classes</caption>
-        <tr>
-            <th>Class</th>
-            <th>Instructor</th>
-            <th>Start Time ({{ tz }})</th>
-            <th>Available Slots</th>
-            <th>Book</th>
-        </tr>
-        {% for c in classes %}
-        <tr>
-            <td>{{ c.name }}</td>
-            <td>{{ c.instructor }}</td>
-            <td>{{ c.start | datetimeformat }}</td>
-            <td>{{ c.available }}</td>
-            <td>
-                <form method="post" action="/book-form">
-                    <input type="hidden" name="class_id" value="{{ c.id }}">
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
-                    <button type="submit">Book</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p style="text-align:center;">No upcoming classes available.</p>
-    {% endif %}
+                const class_id = form.querySelector("input[name='class_id']").value;
+                const name = form.querySelector("input[name='name']").value;
+                const email = form.querySelector("input[name='email']").value;
+
+                fetch("/book", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        class_id: parseInt(class_id),
+                        name: name,
+                        email: email
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Booking failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("✅ Booking successful!");
+                    console.log("Booking successful:", data);
+                })
+                .catch(error => {
+                    alert("❌  Maximum of two bookings for this class. " + error.message);
+                    console.error("Error:", error);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+ 
