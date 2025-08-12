@@ -48,36 +48,36 @@ def _save_bookings(bookings):
 # ---------- Core Booking Logic ----------
 def process_booking(req):
     now_utc = datetime.now(pytz.UTC)
-    
+
     # 1. Check if user already booked more than twice
     bookings = _load_bookings()
-    email_bookings = [b for b in bookings if b["email"] == req.email]
+    email_bookings = [b for b in bookings if b["email"].lower() == req.email.lower()]
     if len(email_bookings) >= 2:
-        return {"message": "Booking failed – not allowed more than twice"}
-    
+        raise HTTPException(status_code=400, detail="Booking failed – not allowed more than twice")
+
     # 2. Check class availability
     cls = get_class(req.class_id)
     if not cls:
-        return {"message": "Class not found"}
-    
+        raise HTTPException(status_code=404, detail="Class not found")
+
     booked_count = count_bookings_for_class(req.class_id)
     if booked_count >= cls["capacity"]:
-        return {"message": "Booking failed – class is full"}
-    
+        raise HTTPException(status_code=400, detail="Booking failed – class is full")
+
     # 3. Save booking in DB
     booking_id = create_booking(
         req.class_id, req.name, req.email, now_utc.isoformat()
     )
-    
-    # 4. Also save booking in JSON file
+
+    # 4. Save booking in JSON
     booking_data = req.dict()
     booking_data["booked_at"] = now_utc.isoformat()
     bookings.append(booking_data)
     _save_bookings(bookings)
-    
+
     # 5. Calculate available slots
     available_slots = cls["capacity"] - booked_count - 1
-    
+
     # 6. Return success response
     return {
         "booking_id": booking_id,

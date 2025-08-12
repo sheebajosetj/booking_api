@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Class Booking</title>
+
     <style>
+        /* ====== COLOR VARIABLES ====== */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -12,26 +16,28 @@
             --light: #f8f9fa;
             --dark: #212529;
         }
-        
+
+        /* ====== GLOBAL RESET ====== */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: auto;
             padding: 20px;
         }
-        
+
+        /* ====== HEADER ====== */
         header {
             text-align: center;
             margin-bottom: 30px;
@@ -41,12 +47,13 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
+
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-        
+
+        /* ====== TIMEZONE SELECTOR ====== */
         .timezone-selector {
             display: flex;
             justify-content: center;
@@ -58,18 +65,18 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        
+
         .timezone-selector label {
             font-weight: bold;
         }
-        
+
         .timezone-selector select {
             padding: 8px 15px;
             border-radius: 5px;
             border: 1px solid #ddd;
             background-color: white;
         }
-        
+
         .timezone-selector button {
             padding: 8px 15px;
             background-color: var(--primary);
@@ -79,25 +86,27 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
+
         .timezone-selector button:hover {
             background-color: var(--secondary);
         }
-        
+
+        /* ====== CURRENT TIME ====== */
         .current-time {
             text-align: center;
             margin: 10px 0;
             font-size: 0.9rem;
             color: #666;
         }
-        
+
+        /* ====== CLASS CARDS ====== */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
-        
+
         .class-card {
             background: white;
             border-radius: 10px;
@@ -105,71 +114,71 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .class-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        
+
         .class-header {
             padding: 15px 20px;
             background-color: #f1f8ff;
             border-bottom: 1px solid #e3f2fd;
         }
-        
+
         .class-header h3 {
             margin: 0;
             color: var(--primary);
         }
-        
+
         .class-body {
             padding: 20px;
         }
-        
+
         .class-info {
             margin-bottom: 15px;
         }
-        
+
         .class-info div {
             margin-bottom: 8px;
             display: flex;
         }
-        
+
         .class-info strong {
             width: 120px;
-            display: inline-block;
             color: #555;
         }
-        
+
+        /* ====== BOOKING FORM ====== */
         .booking-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
-        
+
         .booking-form input {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
         }
-        
+
         .booking-form button {
             padding: 12px;
             background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
             font-weight: bold;
             font-size: 16px;
             transition: background-color 0.3s;
         }
-        
+
         .booking-form button:hover {
             background-color: var(--secondary);
         }
-        
+
+        /* ====== AVAILABILITY BADGES ====== */
         .availability {
             font-weight: bold;
             padding: 10px;
@@ -177,37 +186,22 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
-        
+
         .available {
             background-color: #e8f5e9;
             color: #2e7d32;
         }
-        
+
         .full {
             background-color: #ffebee;
             color: #c62828;
         }
-        
-        .time-display {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .time-display .timezone {
-            background-color: #e0f7fa;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-        
-        /* Popup message styles */
+
+        /* ====== POPUP MESSAGE ====== */
         #popupMessage {
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background-color: #4CAF50;
             color: white;
             padding: 15px 25px;
@@ -217,30 +211,33 @@
             z-index: 1000;
             transition: opacity 0.5s ease;
         }
-        
+
         #popupMessage.error {
             background-color: #f44336 !important;
         }
-        
+
+        /* ====== RESPONSIVE ====== */
         @media (max-width: 768px) {
             .cards-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .timezone-selector {
                 flex-direction: column;
                 align-items: stretch;
             }
         }
-  </style>
+    </style>
 </head>
 <body>
     <div class="container">
+        <!-- ====== HEADER ====== -->
         <header>
             <h1>Fitness Class Booking System</h1>
             <p>Book your spot in our exciting fitness sessions</p>
         </header>
-        
+
+        <!-- ====== TIMEZONE SELECTOR ====== -->
         <div class="timezone-selector">
             <label for="timezone">Select your timezone:</label>
             <select id="timezone" name="timezone">
@@ -252,17 +249,20 @@
             </select>
             <button onclick="updateTimezone()">Update Timezone</button>
         </div>
-        
+
+        <!-- ====== CURRENT TIME ====== -->
         <div class="current-time">
             Current time in {{ current_tz }}: {{ now }}
         </div>
 
+        <!-- ====== POPUP MESSAGE ====== -->
         {% if message %}
         <div id="popupMessage" class="{% if 'error' in message or 'failed' in message %}error{% endif %}">
             {{ message }}
         </div>
         {% endif %}
 
+        <!-- ====== CLASS LIST ====== -->
         {% if classes %}
         <div class="cards-container">
             {% for c in classes %}
@@ -271,7 +271,7 @@
                     <h3>{{ c.name }}</h3>
                     <p>with {{ c.instructor }}</p>
                 </div>
-                
+
                 <div class="class-body">
                     <div class="class-info">
                         <div>
@@ -283,7 +283,8 @@
                             <span>60 minutes</span>
                         </div>
                     </div>
-                    
+
+                    <!-- Availability -->
                     <div class="availability {% if c.available > 0 %}available{% else %}full{% endif %}">
                         {% if c.available > 0 %}
                             {{ c.available }} spot{{ 's' if c.available > 1 }} available
@@ -291,7 +292,8 @@
                             Class is fully booked
                         {% endif %}
                     </div>
-                    
+
+                    <!-- Booking Form -->
                     {% if c.available > 0 %}
                     <form class="booking-form">
                         <input type="hidden" name="class_id" value="{{ c.id }}">
@@ -300,38 +302,35 @@
                         <button type="submit">Book This Class</button>
                     </form>
                     {% else %}
-                    <div class="full-message">
-                        <p>This class is currently full. Please check back later for availability.</p>
-                    </div>
+                    <p style="text-align:center; color:#999;">This class is currently full. Please check back later.</p>
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="no-classes">
-            <p style="text-align:center; font-size: 18px; color: #666;">No upcoming classes available at this time.</p>
-            <p style="text-align:center; color: #999;">Please check back later for new class schedules.</p>
-        </div>
+        <p style="text-align:center; font-size: 18px; color: #666;">No upcoming classes available at this time.</p>
+        <p style="text-align:center; color: #999;">Please check back later for new class schedules.</p>
         {% endif %}
     </div>
-    
+
+    <!-- ====== SCRIPTS ====== -->
     <script>
         function updateTimezone() {
             const timezone = document.getElementById('timezone').value;
             window.location.href = `/?tz=${timezone}`;
         }
-        
-        // Auto-close popup after 5 seconds
+
+        // Auto-hide popup after 5 seconds
         setTimeout(() => {
             const popup = document.getElementById('popupMessage');
             if (popup) popup.style.display = 'none';
         }, 5000);
 
-        // Handle booking form JSON submission
+        // Handle booking via JSON
         document.querySelectorAll(".booking-form").forEach(form => {
             form.addEventListener("submit", function (event) {
-                event.preventDefault(); // stop normal form POST
+                event.preventDefault();
 
                 const class_id = form.querySelector("input[name='class_id']").value;
                 const name = form.querySelector("input[name='name']").value;
@@ -339,32 +338,29 @@
 
                 fetch("/book", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         class_id: parseInt(class_id),
                         name: name,
                         email: email
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Booking failed");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("✅ Booking successful!");
-                    console.log("Booking successful:", data);
-                })
+                .then(async response => {
+    const data = await response.json();
+    if (!response.ok) {
+        alert("❌ " + (data.detail || "Booking failed"));
+    } else {
+        alert("✅ " + (data.message || "Booking successful"));
+    }
+})
+
                 .catch(error => {
-                    alert("❌  Maximum of two bookings for this class. " + error.message);
-                    console.error("Error:", error);
+                    alert("❌ An error occurred: " + error.message);
                 });
             });
         });
     </script>
 </body>
 </html>
+
  

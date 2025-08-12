@@ -16,6 +16,8 @@ pip install -r requirements.txt
 
 ```bash
 uvicorn main:app --reload
+or 
+python main.py
 ```
 
 Open http://127.0.0.1:8000/docs to try it.
@@ -31,7 +33,7 @@ Seeded automatically when app first runs. Classes: Yoga, Zumba, HIIT.
 ## Example cURL
 List classes in IST:
 ```bash
-curl "http://127.0.0.1:8000/classes?tz=Asia/Kolkata"
+curl "http://127.0.0.1:8000/classes"
 ```
 Book:
 ```bash
@@ -39,5 +41,5 @@ curl -X POST "http://127.0.0.1:8000/book" -H "Content-Type: application/json" -d
 ```
 Get bookings:
 ```bash
-curl "http://127.0.0.1:8000/bookings?email=sheeba@example.com"
+curl http://127.0.0.1:8000/bookings?email=john@example.com
 ```
